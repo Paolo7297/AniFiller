@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>AniFiller Configuration</title>
+</head>
+
+<body>
+    <div id="AniFillerConfigPage" data-role="page" class="page type-interior pluginConfigurationPage"
+        data-require="emby-input,emby-button">
+        <div data-role="content">
+            <div class="content-primary">
+                <form id="AniFillerConfigForm">
+                    <div class="inputContainer">
+                        <label class="inputLabel inputLabelUnfocused" for="TheTvdbApiKey">TheTVDB API Key</label>
+                        <input id="TheTvdbApiKey" name="TheTvdbApiKey" type="text" is="emby-input" />
+                        <div class="fieldDescription">Enter your TheTVDB API v4 key. Get one at <a
+                                href="https://thetvdb.com/api-information"
+                                target="_blank">thetvdb.com/api-information</a></div>
+                    </div>
+                    <div>
+                        <button is="emby-button" type="submit" class="raised button-submit block emby-button">
+                            <span>Save</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <script type="text/javascript">
+            var AniFillerConfig = {
+                pluginUniqueId: '93A5C6F2-4315-4122-9013-17D31111620D'
+            };
+
+            document.querySelector('#AniFillerConfigPage')
+                .addEventListener('pageshow', function () {
+                    Dashboard.showLoadingMsg();
+                    ApiClient.getPluginConfiguration(AniFillerConfig.pluginUniqueId).then(function (config) {
+                        document.querySelector('#TheTvdbApiKey').value = config.TheTvdbApiKey || '';
+                        Dashboard.hideLoadingMsg();
+                    });
+                });
+
+            document.querySelector('#AniFillerConfigForm')
+                .addEventListener('submit', function (e) {
+                    Dashboard.showLoadingMsg();
+                    ApiClient.getPluginConfiguration(AniFillerConfig.pluginUniqueId).then(function (config) {
+                        config.TheTvdbApiKey = document.querySelector('#TheTvdbApiKey').value;
+                        ApiClient.updatePluginConfiguration(AniFillerConfig.pluginUniqueId, config).then(function (result) {
+                            Dashboard.processPluginConfigurationUpdateResult(result);
+                        });
+                    });
+
+                    e.preventDefault();
+                    return false;
+                });
+        </script>
+    </div>
+</body>
+
+</html>
