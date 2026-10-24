@@ -64,9 +64,21 @@ public class TheTvdbService
 
             var episodesJson = await episodesResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
             using var episodesDoc = JsonDocument.Parse(episodesJson);
-            var absoluteNumber = episodesDoc.RootElement.GetProperty("data").GetProperty("absoluteNumber").GetInt32();
+            var data = episodesDoc.RootElement.GetProperty("data");
 
-            var seriesId = episodesDoc.RootElement.GetProperty("data").GetProperty("seriesId").GetInt32();
+            int? absoluteNumber = null;
+            if (data.TryGetProperty("absoluteNumber", out var absElement) && absElement.ValueKind == JsonValueKind.Number)
+            {
+                absoluteNumber = absElement.GetInt32();
+            }
+
+            if (absoluteNumber == null)
+            {
+                _logger.LogWarning("TheTVDB: absoluteNumber is null for episode {TvdbId}", tvdbId);
+                return (null, null);
+            }
+
+            var seriesId = data.GetProperty("seriesId").GetInt32();
 
             var seriesUrl = $"https://api4.thetvdb.com/v4/series/{seriesId}/translations/eng";
             var seriesResponse = await client.GetAsync(seriesUrl).ConfigureAwait(false);

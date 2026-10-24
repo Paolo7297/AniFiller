@@ -31,15 +31,16 @@ public class AniFillerController : ControllerBase
     /// <param name="libraryManager">Instance of the <see cref="ILibraryManager"/> interface.</param>
     /// <param name="logger">Instance of the <see cref="ILogger{AniFillerController}"/> interface.</param>
     /// <param name="httpClientFactory">Instance of the <see cref="IHttpClientFactory"/> interface.</param>
+    /// <param name="loggerFactory">Instance of the <see cref="ILoggerFactory"/> interface.</param>
     public AniFillerController(
         ILibraryManager libraryManager,
         ILogger<AniFillerController> logger,
-        IHttpClientFactory httpClientFactory)
+        IHttpClientFactory httpClientFactory,
+        ILoggerFactory loggerFactory)
     {
         _libraryManager = libraryManager;
         _logger = logger;
 
-        var loggerFactory = LoggerFactory.Create(b => b.AddConsole());
         var tvdbLogger = loggerFactory.CreateLogger<TheTvdbService>();
         var aflLogger = loggerFactory.CreateLogger<AnimeFillerListService>();
 
