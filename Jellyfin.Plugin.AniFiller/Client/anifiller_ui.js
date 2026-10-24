@@ -40,16 +40,20 @@
     function injectStatusIndicator(status) {
         console.log(`AniFiller: Injecting indicator for ${status}`);
 
-        const headerElement = document.querySelector(".headerLeft");
-        if (headerElement) {
+        const titleElement = document.querySelector("p.MuiTypography-body1");
+        if (titleElement) {
             const indicator = createStatusIndicator(status);
+            if (!indicator) {
+                console.warn('AniFiller: Unknown status, skipping indicator');
+                return false;
+            }
 
-            headerElement.appendChild(indicator);
+            titleElement.insertAdjacentElement('afterend', indicator);
 
             return true;
         }
 
-        console.warn('AniFiller: Could not find title element to inject indicator');
+        console.warn('AniFiller: Could not find MuiTypography-body1 element to inject indicator');
         return false;
     }
 
